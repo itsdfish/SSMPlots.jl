@@ -9,16 +9,11 @@ This package provides plotting functionality for sequential sampling models. The
 using SequentialSamplingModels
 using SSMPlots
 using Random 
-Random.seed!(85)
+Random.seed!(187)
 
-ν = [1.0,0.50]
-k = 0.50
-A = 1.0
-τ = 0.30
-
-dist = RDM(;ν, k, A, τ)
-histogram(dist; xlims=(0,2.5))
-plot!(dist; t_range=range(.301, 2.5, length=100))
+dist = LBA()
+histogram(dist; xlims=(0,1.5))
+plot!(dist; t_range=range(.301, 1.5, length=100))
 ```
 <img src="resources/example.png" />
 
