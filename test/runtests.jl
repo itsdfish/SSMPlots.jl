@@ -1,8 +1,8 @@
-using SSMPlots
-using Test
-using SequentialSamplingModels
-
-@testset "SSMPlots.jl" begin
+using SafeTestsets
+@safetestset "run plots" begin
+    using SSMPlots
+    using Test
+    using SequentialSamplingModels
     dist = RDM(;ν=[1,2,3], k=.30, A=.70, τ=.20)
     h = histogram(dist)
     plot!(h, dist)

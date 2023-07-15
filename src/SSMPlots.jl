@@ -17,6 +17,7 @@ module SSMPlots
     export plot! 
 
     include("kde.jl")
-    include("functions.jl")
+    include("plot.jl")
+    include("histogram.jl")
 
 end

@@ -1,6 +1,9 @@
 # SSMPlots
 
-[![Build Status](https://github.com/itsdfish/SSMPlots.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/itsdfish/SSMPlots.jl/actions/workflows/CI.yml?query=branch%3Amain)
+[![](docs/logo/logo.png)](https://itsdfish.github.io/SSMPlots.jl/dev/)
+
+[![](https://img.shields.io/badge/docs-latest-blue.svg)](https://itsdfish.github.io/SSMPlots.jl/dev/) [![CI](https://github.com/itsdfish/SSMPlots.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/itsdfish/SSMPlots.jl/actions/workflows/CI.yml)
+
 
 This package provides plotting functionality for sequential sampling models. The code block below provides an example:
 
@@ -21,4 +24,4 @@ plot!(dist; t_range=range(.301, 2.5, length=100))
 ```
 <img src="resources/example.png" />
 
-For more examples, please see the documentation at [SequentialSamplingModels.jl](https://itsdfish.github.io/SequentialSamplingModels.jl/dev/).
+For more information, please see the documentation link above. Additional examples can be found at [SequentialSamplingModels.jl](https://itsdfish.github.io/SequentialSamplingModels.jl/dev/).
