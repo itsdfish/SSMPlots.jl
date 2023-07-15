@@ -20,3 +20,5 @@ histogram(dist; xlims=(0,2.5))
 plot!(dist; t_range=range(.301, 2.5, length=100))
 ```
 <img src="resources/example.png" />
+
+For more examples, please see the documentation at [SequentialSamplingModels.jl](https://itsdfish.github.io/SequentialSamplingModels.jl/dev/).
