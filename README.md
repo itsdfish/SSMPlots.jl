@@ -1,5 +1,4 @@
 # SSMPlots
-
 [![](docs/logo/logo.png)](https://itsdfish.github.io/SSMPlots.jl/dev/)
 
 [![](https://img.shields.io/badge/docs-latest-blue.svg)](https://itsdfish.github.io/SSMPlots.jl/dev/) [![CI](https://github.com/itsdfish/SSMPlots.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/itsdfish/SSMPlots.jl/actions/workflows/CI.yml)
