@@ -1,3 +1,5 @@
+# Basic Example 
+
 This package provides plotting functionality for sequential sampling models. The code block below provides an example:
 
 ```@example basic_example 

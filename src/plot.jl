@@ -36,20 +36,24 @@ function plot(d::SSM1D; t_range=default_range(d), kwargs...)
     return ssm_plot(get_pdf_type(d), d; t_range, kwargs...)
 end
 
-function ssm_plot(::Type{<:Exact}, d; t_range, kwargs...)
+function ssm_plot(::Type{<:Exact}, d; 
+        density_offset = 0, t_range, kwargs...)
     n_subplots = n_options(d)
-    pds = gen_pds(d, t_range, n_subplots)
+    pds = gen_pds(d, t_range, n_subplots) 
+    map!(x -> x .+ density_offset, pds, pds)
     ymax = maximum(vcat(pds...)) * 1.2
     defaults = get_plot_defaults(n_subplots)
     return plot(t_range, pds; ylims = (0,ymax), defaults..., kwargs...)
 end
 
-function ssm_plot(::Type{<:Approximate}, d; m_args = (), n_sim = 2000, t_range, kwargs...)
+function ssm_plot(::Type{<:Approximate}, d;
+        density_offset = 0, m_args = (), n_sim = 2000, t_range, kwargs...)
     n_subplots = n_options(d)
     choices, rts = rand(d, n_sim, m_args...)
     choice_probs = map(c -> mean(choices .== c), 1:n_subplots)
     kdes = [kernel(rts[choices .== c]) for c ∈ 1:n_subplots]
     pds = gen_pds(kdes, t_range, choice_probs)
+    map!(x -> x .+ density_offset, pds, pds)
     ymax = maximum(vcat(pds...)) * 1.2
     defaults = get_plot_defaults(n_subplots)
     return plot(t_range, pds; ylims = (0,ymax), defaults..., kwargs...)
@@ -98,20 +102,25 @@ function plot!(cur_plot::Plots.Plot, d::SSM2D; t_range=default_range(d), kwargs.
     return ssm_plot!(get_pdf_type(d), d, cur_plot; t_range, kwargs...)
 end
 
-function ssm_plot!(::Type{<:Exact}, d, cur_plot; t_range, kwargs...)
+function ssm_plot!(::Type{<:Exact}, d, cur_plot; 
+        density_offset = 0, t_range, kwargs...)
     n_subplots = n_options(d)
     pds = gen_pds(d, t_range, n_subplots)
+    map!(x -> x .+ density_offset, pds, pds)
     ymax = maximum(vcat(pds...)) * 1.2
     defaults = get_plot_defaults(n_subplots)
     return plot!(cur_plot, t_range, pds; ylims = (0,ymax), defaults..., kwargs...)
 end
 
-function ssm_plot!(::Type{<:Approximate}, d, cur_plot; n_sim = 2000, m_args=(), t_range, kwargs...)
+function ssm_plot!(::Type{<:Approximate}, d, cur_plot; 
+    density_offset=0, n_sim = 2000, m_args=(), t_range, kwargs...)
     n_subplots = n_options(d)
     choices, rts = rand(d, n_sim, m_args...)
     choice_probs = map(c -> mean(choices .== c), 1:n_subplots)
     kdes = [kernel(rts[choices .== c]) for c ∈ 1:n_subplots]
     pds = gen_pds(kdes, t_range, choice_probs)
+
+    map!(x -> x .+ density_offset, pds, pds)
     ymax = maximum(vcat(pds...)) * 1.2
     defaults = get_plot_defaults(n_subplots)
     return plot!(cur_plot, t_range, pds; ylims = (0,ymax), defaults..., kwargs...)
