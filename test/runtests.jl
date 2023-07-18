@@ -41,4 +41,7 @@ using SafeTestsets
     
     plot(dist; t_range=range(.130, 1.0, length=100))
     histogram!(dist)
+
+    dist = LCA()
+    plot_model(dist; n_sim=10)
 end

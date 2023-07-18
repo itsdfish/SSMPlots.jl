@@ -145,7 +145,7 @@ end
 
 function get_plot_defaults(n_subplots)
     title = ["choice $i" for _ ∈ 1:1,  i ∈ 1:n_subplots]
-    return (xaxis=("RT [s]"), yaxis = "density", grid=false,
+    return (xlabel=("RT [s]"), ylabel = "density", grid=false,
         linewidth = 1.5, color = :black, leg=false, title,
          layout=(n_subplots,1))
 end
