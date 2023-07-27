@@ -44,4 +44,8 @@ using SafeTestsets
 
     dist = LCA()
     plot_model(dist; n_sim=10)
+
+    dist = LBA()
+    density_kwargs=(;t_range=range(.3,1.2, length=100),)
+    plot_model(dist; add_density=true, density_kwargs,  xlims=(0,1.2))
 end
