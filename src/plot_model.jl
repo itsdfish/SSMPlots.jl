@@ -1,139 +1,34 @@
 """
-    plot_model(model::AbstractLCA; 
+    plot_model(model; 
         add_density=false, density_kwargs=(), n_sim=1, kwargs...)
 
-Plot the evidence accumulation process of the leaky competing accumulator model.
+Plot the evidence accumulation process of a generic SSM.
 
 # Arguments
 
-- `model::AbstractLCA`: leaky competing accumulator model object 
+- `model`: a generic object representing an SSM
 
 # Keywords 
 
 - `add_density=false`: add density plot above threshold line if true 
 - `density_kwargs=()`: pass optional keyword arguments to density plot 
 - `labels = default_labels(model)`: a vector of parameter label options 
-- `density_scale = model.α`: scale the maximum height of the density
+- `density_scale = compute_threshold(model)`: scale the maximum height of the density
 - `n_sim=1`: the number of simulated decision processes per option
 - `kwargs...`: optional keyword arguments for configuring plot options
 """
-function plot_model(model::AbstractLCA; 
-            add_density=false, 
-            density_kwargs=(), 
-            labels = default_labels(model), 
-            density_scale = model.α,
-            n_sim=1, 
-            kwargs...)
-    n_subplots = n_options(model)
-    defaults = get_model_plot_defaults(model, n_subplots)
-    model_plot = plot(;defaults..., kwargs...)
-    for i ∈ 1:n_sim
-        time_range,evidence = simulate(model)
-        time_range .+= model.τ
-        plot!(model_plot, time_range, evidence; defaults..., kwargs...)
-    end
-    add_threashold!(model, model_plot)
-    for s ∈ 1:n_subplots
-        annotate!(labels, subplot=s)
-    end
-    if add_density 
-        plot!(model_plot, model; 
-            density_offset = model.α + .05, 
-            density_scale,
-            xlabel = "",
-            ylabel = "", 
-            xticks = nothing,
-            yticks = nothing, 
-            density_kwargs...)
-    end
-    plot!(model_plot; defaults...)
-    return model_plot
-end
-
-"""
-    plot_model(model::AbstractLBA; 
-        add_density=false, density_kwargs=(), n_sim=1, kwargs...)
-
-Plot the evidence accumulation process of the leaky competing accumulator model.
-
-# Arguments
-
-- `model::AbstractLBA`: linear ballistic accumulator model object 
-
-# Keywords 
-
-- `add_density=false`: add density plot above threshold line if true 
-- `density_kwargs=()`: pass optional keyword arguments to density plot
-- `labels = default_labels(model),`: a vector of parameter label options 
-- `density_scale = model.A + model.k`: scale the maximum height of the density
-- `n_sim=1`: the number of simulated decision processes per option
-- `kwargs...`: optional keyword arguments for configuring plot options
-"""
-function plot_model(model::AbstractLBA; 
-            add_density=false, 
-            density_kwargs=(),
-            labels = default_labels(model), 
-            density_scale = model.A + model.k,
-            n_sim=1, 
-            kwargs...)
-    n_subplots = n_options(model)
-    defaults = get_model_plot_defaults(model, n_subplots)
-    model_plot = plot(;defaults..., kwargs...)
-    add_starting_point!(model, model_plot)
-    α = model.A + model.k
-    for i ∈ 1:n_sim
-        time_range,evidence = simulate(model)
-        plot!(model_plot, time_range .+ model.τ, evidence; 
-            ylims=(0, α), defaults..., kwargs...)
-    end
-    add_threashold!(model, model_plot)
-    for s ∈ 1:n_subplots
-        annotate!(labels, subplot=s)
-    end
-    if add_density 
-        plot!(model_plot, model; 
-            density_scale,
-            density_offset = α + 0.05,
-            xlabel = "",
-            ylabel = "", 
-            xticks = nothing,
-            yticks = nothing, 
-            density_kwargs...)
-    end
-    return model_plot
-end
-
-"""
-    plot_model(model::AbstractRDM; 
-        add_density=false, density_kwargs=(), n_sim=1, kwargs...)
-
-Plot the evidence accumulation process of the racing diffusion model.
-
-# Arguments
-
-- `model::AbstractRDM`: racing diffusion model object 
-
-# Keywords 
-
-- `add_density=false`: add density plot above threshold line if true 
-- `density_kwargs=()`: pass optional keyword arguments to density plot 
-- `labels = default_labels(model)`: a vector of parameter label options 
-- `density_scale = model.A + model.k`: scale the maximum height of the density
-- `n_sim=1`: the number of simulated decision processes per option
-- `kwargs...`: optional keyword arguments for configuring plot options
-"""
-function plot_model(model::AbstractRDM; 
+function plot_model(model; 
             add_density = false, 
             density_kwargs = (), 
             labels = default_labels(model), 
-            density_scale = model.A + model.k,
+            density_scale = compute_threshold(model),
             n_sim = 1, 
             kwargs...)
     n_subplots = n_options(model)
     defaults = get_model_plot_defaults(model, n_subplots)
     model_plot = plot(;defaults..., kwargs...)
     add_starting_point!(model, model_plot)
-    α = model.A + model.k
+    α = compute_threshold(model) 
     zs = Vector{Vector{Float64}}(undef,n_sim)
     for i ∈ 1:n_sim
         time_range,evidence = simulate(model)
@@ -159,57 +54,9 @@ function plot_model(model::AbstractRDM;
     return model_plot
 end
 
-"""
-    plot_model(model::AbstractWald; 
-        add_density=false, density_kwargs=(), n_sim=1, kwargs...)
-
-Plot the evidence accumulation process of the leaky competing accumulator model.
-
-# Arguments
-
-- `model::AbstractWald`: Wald model object 
-
-# Keywords 
-
-- `add_density=false`: add density plot above threshold line if true 
-- `density_kwargs=()`: pass optional keyword arguments to density plot 
-- `labels = default_labels(model)`: a vector of parameter label options 
-- `density_scale = model.α`: scale the maximum height of the density
-- `n_sim=1`: the number of simulated decision processes per option
-- `kwargs...`: optional keyword arguments for configuring plot options
-"""
-function plot_model(model::AbstractWald; 
-            add_density=false, 
-            density_kwargs=(), 
-            labels = default_labels(model), 
-            density_scale = model.α,
-            n_sim=1, 
-            kwargs...)
-    n_subplots = n_options(model)
-    defaults = get_model_plot_defaults(model, n_subplots)
-    model_plot = plot(;defaults..., kwargs...)
-    for i ∈ 1:n_sim
-        time_range,evidence = simulate(model)
-        time_range .+= model.τ
-        plot!(model_plot, time_range, evidence; defaults..., kwargs...)
-    end
-    add_threashold!(model, model_plot)
-    for s ∈ 1:n_subplots
-        annotate!(labels, subplot=s)
-    end
-    if add_density 
-        plot!(model_plot, model; 
-            density_scale,
-            density_offset = model.α + .05, 
-            xlabel = "",
-            ylabel = "", 
-            xticks = nothing,
-            yticks = nothing, 
-            density_kwargs...)
-    end
-    plot!(model_plot; defaults...)
-    return model_plot
-end
+compute_threshold(model) = model.α
+compute_threshold(model::AbstractLBA) = model.A + model.k
+compute_threshold(model::AbstractRDM) = model.A + model.k
 
 """
     default_labels(model::AbstractRDM)
@@ -265,6 +112,8 @@ function default_labels(model::AbstractRDM)
         (τ/2,0,text("τ",10, :bottom)),
     ]
 end
+
+add_starting_point!(model, model_plot; kwargs...) = nothing
 
 """
     add_starting_point!(model::AbstractLBA, cur_plot; kwargs...)
