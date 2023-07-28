@@ -57,4 +57,8 @@ using SafeTestsets
     dist = Wald()
     density_kwargs=(;t_range=range(.2,1.2, length=100),)
     plot_model(dist; add_density=true, n_sim=2, density_kwargs, xlims=(0,1.2))
+
+    dist = WaldMixture()
+    density_kwargs=(;t_range=range(.13,.60, length=100),)
+    plot_model(dist; add_density=true, n_sim=2, density_kwargs, xlims=(0,.60))
 end
