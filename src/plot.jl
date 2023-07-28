@@ -154,9 +154,18 @@ function get_plot_defaults(n_subplots)
          layout=(n_subplots,1))
 end
 
-
 scale_density!(pds, x::Nothing) = nothing
 
+"""
+    scale_density!(pds, scalar::Number)
+
+Scale the height of the density.
+
+# Arguments
+
+- `pds`: a vector of probability densities 
+- `scalar`: a scalar representing the maximum density
+"""
 function scale_density!(pds, scalar::Number)
     temp = vcat(pds...)
     filter!(!isnan, temp)

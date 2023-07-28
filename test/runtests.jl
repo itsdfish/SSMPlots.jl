@@ -42,10 +42,19 @@ using SafeTestsets
     plot(dist; t_range=range(.130, 1.0, length=100))
     histogram!(dist)
 
-    dist = LCA()
-    plot_model(dist; n_sim=10)
-
     dist = LBA()
     density_kwargs=(;t_range=range(.3,1.2, length=100),)
-    plot_model(dist; add_density=true, density_kwargs,  xlims=(0,1.2))
+    plot_model(dist; add_density=true, n_sim=2, density_kwargs, xlims=(0,1.2))
+
+    dist = LCA()
+    density_kwargs=(;t_range=range(.20, 1.50, length=100),)
+    plot_model(dist; n_sim=10, add_density=true, density_kwargs, xlims=(0,1.50))
+    
+    dist = RDM()
+    density_kwargs=(;t_range=range(.20, 0.80, length=100),)
+    plot_model(dist; n_sim=10, add_density=true, density_kwargs, xlims=(0,0.80))
+    
+    dist = Wald()
+    density_kwargs=(;t_range=range(.2,1.2, length=100),)
+    plot_model(dist; add_density=true, n_sim=2, density_kwargs, xlims=(0,1.2))
 end

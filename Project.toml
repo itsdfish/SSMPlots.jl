@@ -1,7 +1,7 @@
 name = "SSMPlots"
 uuid = "b9734e3f-1fb5-4b0f-895a-a4ed7ba034cc"
 authors = ["itsdfish"]
-version = "0.0.2"
+version = "0.0.3"
 
 [deps]
 Interpolations = "a98d9a8b-a2ab-59e6-89dd-64a1c18fca59"
