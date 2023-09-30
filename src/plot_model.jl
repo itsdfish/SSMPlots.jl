@@ -81,7 +81,8 @@ function plot_model(model::ContinuousMultivariateSSM;
 
     defaults = get_model_plot_defaults(model)
     ts,evidence = simulate(model)
-    model_plot = plot(evidence[:,1], evidence[:,2], line_z=ts; defaults..., kwargs...)
+    model_plot = plot(evidence[:,1], evidence[:,2], line_z=ts; 
+        defaults..., kwargs...)
     add_threashold!(model, model_plot)
     return model_plot
 end
@@ -361,7 +362,8 @@ Returns default plot options
 """
 function get_model_plot_defaults(d::AbstractCDDM)
     return (xaxis=nothing, yaxis=nothing, xticks=nothing, yticks=nothing, grid=false, 
-        linewidth = .75, color = :black, colorbar_title="Time [s]", framestyle=:box)
+        linewidth = .75, c=cgrad([:black,:purple,:darkorange], [.3,.6,.8]), colorbar_title="Time [s]", 
+        framestyle=:box)
 end
 
 
