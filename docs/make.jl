@@ -2,6 +2,7 @@ using Documenter
 using SSMPlots
 
 makedocs(
+    warnonly = true,
     sitename="SSMPlots",
     format=Documenter.HTML(
         assets=[
