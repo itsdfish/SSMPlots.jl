@@ -2,6 +2,7 @@ module SSMPlots
 
     using Interpolations
     using KernelDensity
+    using LinearAlgebra
     using Plots 
 
     using KernelDensity: Epanechnikov
@@ -22,6 +23,8 @@ module SSMPlots
     export plot! 
     export plot_model
     export plot_model!
+
+    const SSMs = SequentialSamplingModels
 
     include("kde.jl")
     include("plot.jl")

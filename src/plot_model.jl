@@ -25,7 +25,7 @@ function plot_model(model;
             n_sim = 1, 
             kwargs...)
     n_subplots = n_options(model)
-    defaults = get_model_plot_defaults(model, n_subplots)
+    defaults = get_model_plot_defaults(model)
     model_plot = plot(;defaults..., kwargs...)
     add_starting_point!(model, model_plot)
     α = compute_threshold(model) 
@@ -51,6 +51,38 @@ function plot_model(model;
             yticks = nothing, 
             density_kwargs...)
     end
+    return model_plot
+end
+
+"""
+    plot_model(model; 
+        add_density=false, density_kwargs=(), n_sim=1, kwargs...)
+
+Plot the evidence accumulation process of a continous multivariate sequential sampling model.
+
+# Arguments
+
+- `model::ContinuousMultivariateSSM`: a continous multivariate sequential sampling model
+
+# Keywords 
+
+- `add_density=false`: add density plot above threshold line if true 
+- `density_kwargs=()`: pass optional keyword arguments to density plot 
+- `labels = default_labels(model)`: a vector of parameter label options 
+- `n_sim=1`: the number of simulated decision processes per option
+- `kwargs...`: optional keyword arguments for configuring plot options
+"""
+function plot_model(model::ContinuousMultivariateSSM;
+    add_density = false, 
+    density_kwargs = (), 
+    labels = default_labels(model), 
+    n_sim = 1, 
+    kwargs...)
+
+    defaults = get_model_plot_defaults(model)
+    ts,evidence = simulate(model)
+    model_plot = plot(evidence[:,1], evidence[:,2], line_z=ts; defaults..., kwargs...)
+    add_threashold!(model, model_plot)
     return model_plot
 end
 
@@ -105,7 +137,7 @@ Generates default parameter labels and locations
 """
 function default_labels(model::AbstractRDM)
     (;τ,A,k) = model
-    α = A + k
+    α = compute_threshold(model)
     return [
         (τ,A,text("A", 10, :right, :top)),
         (0,α,text("α", 10, :right)),
@@ -198,7 +230,7 @@ Adds a horizonal line reprenting the decision threshold.
 - `kwargs...`: optional keyword arguments for configuring the plot 
 """
 function add_threashold!(model::AbstractLBA, model_plot; kwargs...)
-    α = model.A + model.k
+    α = compute_threshold(model)
     hline!(model_plot, fill(α, 1, n_options(model)), linestyle=:dash,
          color=:black;  kwargs...)
     return nothing
@@ -219,14 +251,38 @@ Adds a horizonal line reprenting the decision threshold.
 - `kwargs...`: optional keyword arguments for configuring the plot 
 """
 function add_threashold!(model::AbstractRDM, model_plot; kwargs...)
-    α = model.A + model.k
+    α = compute_threshold(model)
     hline!(model_plot, fill(α, 1, n_options(model)), linestyle=:dash,
          color=:black;  kwargs...)
     return nothing
 end
 
 """
-    get_model_plot_defaults(d::AbstractLCA, n_subplots)
+    add_threashold!(model::AbstractCDDM, model_plot; kwargs...)
+
+Adds a circle reprenting the decision threshold of an abstract CDDM.
+
+# Arguments
+
+- `model::AbstractCDDM`: an object representing a circular drift diffusion model 
+- `model_plot`: a plot object 
+
+# Keywords 
+
+- `kwargs...`: optional keyword arguments for configuring the plot 
+"""
+function add_threashold!(model::AbstractCDDM, model_plot; kwargs...)
+    plot!(model_plot, circle(0,0, model.α), aspect_ratio=1, color=:black, leg=false; kwargs...)
+    return nothing
+end
+
+function circle(h, k, r)
+    θ = range(0, 2π, length=200)
+    return h .+ r * sin.(θ), k .+ r * cos.(θ)
+end
+
+"""
+    get_model_plot_defaults(d::AbstractLCA)
 
 Returns default plot options 
 
@@ -235,14 +291,15 @@ Returns default plot options
 - `d::AbstractLCA`: an object for the leaky competing accumulator
 - `n_subplots`: the number of subplots (i.e., choices)
 """
-function get_model_plot_defaults(d::AbstractLCA, n_subplots)
+function get_model_plot_defaults(d::AbstractLCA)
+    n_subplots = n_options(d)
     title = ["choice $i" for _ ∈ 1:1,  i ∈ 1:n_subplots]
     return (xaxis=nothing, yaxis=nothing, xticks=nothing, yticks=nothing,
          grid=false, linewidth = .75, color = :black, leg=false, title, layout=(n_subplots,1))
 end
 
 """
-    get_model_plot_defaults(d::AbstractWald, n_subplots)
+    get_model_plot_defaults(d::AbstractWald)
 
 Returns default plot options 
 
@@ -251,14 +308,15 @@ Returns default plot options
 - `d::AbstractWald`: an object for the Wald model
 - `n_subplots`: the number of subplots (i.e., choices)
 """
-function get_model_plot_defaults(d::AbstractWald, n_subplots)
+function get_model_plot_defaults(d::AbstractWald)
+    n_subplots = n_options(d)
     title = ["choice $i" for _ ∈ 1:1,  i ∈ 1:n_subplots]
     return (xaxis=nothing, yaxis=nothing, xticks=nothing, yticks=nothing,
          grid=false, linewidth = .75, color = :black, leg=false, title, layout=(n_subplots,1))
 end
 
 """
-    get_model_plot_defaults(d::AbstractRDM, n_subplots)
+    get_model_plot_defaults(d::AbstractRDM)
 
 Returns default plot options 
 
@@ -267,14 +325,15 @@ Returns default plot options
 - `d::AbstractRDM`: an object for the racing diffusion model
 - `n_subplots`: the number of subplots (i.e., choices)
 """
-function get_model_plot_defaults(d::AbstractRDM, n_subplots)
+function get_model_plot_defaults(d::AbstractRDM)
+    n_subplots = n_options(d)
     title = ["choice $i" for _ ∈ 1:1,  i ∈ 1:n_subplots]
     return (xaxis=nothing, yaxis=nothing, xticks=nothing, yticks=nothing, 
         linewidth = .75, color = :black, leg=false, title, layout=(n_subplots,1))
 end
 
 """
-    get_model_plot_defaults(d::AbstractLBA, n_subplots)
+    get_model_plot_defaults(d::AbstractLBA)
 
 Returns default plot options 
 
@@ -283,11 +342,28 @@ Returns default plot options
 - `d::AbstractLBA`: an object for the linear ballistic accumulator
 - `n_subplots`: the number of subplots (i.e., choices)
 """
-function get_model_plot_defaults(d::AbstractLBA, n_subplots)
+function get_model_plot_defaults(d::AbstractLBA)
+    n_subplots = n_options(d)
     title = ["choice $i" for _ ∈ 1:1,  i ∈ 1:n_subplots]
     return (xaxis=nothing, yaxis=nothing, xticks=nothing, yticks=nothing, grid=false, 
         linewidth = .75, color = :black, leg=false, title, layout=(n_subplots,1), arrow=:closed)
 end
+
+"""
+    get_model_plot_defaults(d::AbstractCDDM)
+
+Returns default plot options 
+
+# Arguments
+
+- `d::AbstractCDDM`: an object for the linear ballistic accumulator
+- `n_subplots`: the number of subplots (i.e., choices)
+"""
+function get_model_plot_defaults(d::AbstractCDDM)
+    return (xaxis=nothing, yaxis=nothing, xticks=nothing, yticks=nothing, grid=false, 
+        linewidth = .75, color = :black, colorbar_title="Time [s]", framestyle=:box)
+end
+
 
 # function add_mean_drift_rate(model, cur_plot, zs)
 #     z = mean(zs)

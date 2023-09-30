@@ -42,6 +42,19 @@ using SafeTestsets
     plot(dist; t_range=range(.130, 1.0, length=100))
     histogram!(dist)
 
+    dist = CDDM(;ν=[1.5,1.5], η=[1,1], σ=1, α=2.5, τ=0.30)
+    h = histogram(dist)
+    plot!(h, dist)
+    
+    histogram(dist)
+    plot!(dist)
+    
+    p = plot(dist)
+    histogram!(p, dist)
+    
+    plot(dist)
+    histogram!(dist)
+
     dist = LBA()
     density_kwargs=(;t_range=range(.3,1.2, length=100),)
     plot_model(dist; add_density=true, n_sim=2, density_kwargs, xlims=(0,1.2))
@@ -61,4 +74,7 @@ using SafeTestsets
     dist = WaldMixture()
     density_kwargs=(;t_range=range(.13,.60, length=100),)
     plot_model(dist; add_density=true, n_sim=2, density_kwargs, xlims=(0,.60))
+
+    dist = CDDM(;ν=[1.5,1.5], η=[1,1], σ=1, α=2.5, τ=0.30)
+    plot_model(dist; lims=(-5,5))
 end
