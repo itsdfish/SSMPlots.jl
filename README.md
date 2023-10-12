@@ -1,3 +1,7 @@
+| :exclamation:  Important Note  |
+|-----------------------------------------|
+This Repo has been decomissioned for SequentialSamplingModels 0.8.0 and higher in favor of conditional loading of plotting functionality. 
+
 # SSMPlots
 [![](docs/logo/logo.png)](https://itsdfish.github.io/SSMPlots.jl/dev/)
 
